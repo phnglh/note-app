@@ -3,6 +3,7 @@
 A modern, minimalist note-taking app powered by **Next.js** and **Firebase**.
 
 ✅ **Features**:
+
 - ✍️ Add, update, and remove notes
 - 🔒 Secure user authentication via Firebase Auth
 - ☁️ Real-time note syncing with Firestore
