@@ -1,14 +1,21 @@
 'use client';
+
 import { createContext, useContext, useEffect, useState, ReactNode, JSX } from 'react';
-import { onAuthStateChanged, User } from 'firebase/auth';
+import { onAuthStateChanged, signOut, User } from 'firebase/auth';
 import { auth } from '@/config/firebaseConfig';
+import Spinner from '@/components/ui/Spinner';
 
-// Initialize Firebase auth instance
+interface AuthContextType {
+  user: User | null;
+  signOut: () => Promise<void>;
+}
 
-// Create the authentication context
-export const AuthContext = createContext({});
+export const AuthContext = createContext<AuthContextType>({
+  user: null,
+  signOut: async () => {},
+});
 
-// Custom hook to access the authentication context
+// Custom hook để truy cập context
 export const useAuthContext = () => useContext(AuthContext);
 
 interface AuthContextProviderProps {
@@ -16,32 +23,29 @@ interface AuthContextProviderProps {
 }
 
 export function AuthContextProvider({ children }: AuthContextProviderProps): JSX.Element {
-  // Set up state to track the authenticated user and loading status
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Subscribe to the authentication state changes
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        // User is signed in
-        setUser(user);
-      } else {
-        // User is signed out
-        setUser(null);
-      }
-      // Set loading to false once authentication state is determined
+      setUser(user);
       setLoading(false);
     });
 
-    // Unsubscribe from the authentication state changes when the component is unmounted
     return () => unsubscribe();
   }, []);
 
-  // Provide the authentication context to child components
+  const handleSignOut = async () => {
+    try {
+      await signOut(auth);
+    } catch (error) {
+      console.error('Sign out failed:', error);
+    }
+  };
+
   return (
-    <AuthContext.Provider value={{ user }}>
-      {loading ? <div>Loading...</div> : children}
+    <AuthContext.Provider value={{ user, signOut: handleSignOut }}>
+      {loading ? <Spinner /> : children}
     </AuthContext.Provider>
   );
 }

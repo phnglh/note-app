@@ -1,22 +1,21 @@
+// src/app/page.tsx
 'use client';
-import { auth } from '@/config/firebaseConfig';
-import { onAuthStateChanged } from 'firebase/auth';
-import { useRouter } from 'next/navigation';
+
 import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { useAuthContext } from '@/context/AuthContext';
 
 export default function Home() {
+  const { user } = useAuthContext();
   const router = useRouter();
 
   useEffect(() => {
-    const unsub = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        router.push('/notes');
-      } else {
-        router.push('/login');
-      }
-    });
-    return () => unsub();
-  }, [router]);
+    if (user) {
+      router.push('/notes');
+    } else {
+      router.push('/login');
+    }
+  }, [user, router]);
 
   return null;
 }
