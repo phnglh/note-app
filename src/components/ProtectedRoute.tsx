@@ -24,7 +24,13 @@ export default function ProtectedRoute({
     if (redirectIfAuthenticated && user) {
       router.push(redirectTo);
     }
+
+    if (redirectIfUnauthenticated && !user) {
+      router.push(redirectTo);
+    }
   }, [user, router, redirectIfAuthenticated, redirectIfUnauthenticated, redirectTo]);
+
+  if (redirectIfUnauthenticated && !user) return null;
 
   return <>{children}</>;
 }

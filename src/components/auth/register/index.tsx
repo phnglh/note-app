@@ -1,13 +1,14 @@
 'use client';
 
 import { useState } from 'react';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import AuthForm from '../form';
-import { auth } from '@/config/firebaseConfig';
+import { auth, db } from '@/config/firebaseConfig';
 import { FirebaseError } from 'firebase/app';
+import { ref, set } from 'firebase/database';
 
 export default function RegisterContainer() {
-  const [values, setValues] = useState({ email: '', password: '', confirmPassword: '' });
+  const [values, setValues] = useState({ name: '', email: '', password: '', confirmPassword: '' });
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -27,8 +28,20 @@ export default function RegisterContainer() {
     }
 
     try {
-      await createUserWithEmailAndPassword(auth, values.email, values.password);
-      console.log('User registered successfully');
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        values.email,
+        values.password
+      );
+      const user = userCredential.user;
+      await updateProfile(user, { displayName: values.name });
+
+      await set(ref(db, 'users/' + user.uid), {
+        name: values.name,
+        email: values.email,
+        createdAt: new Date().toISOString(),
+        role: 'user',
+      });
     } catch (err) {
       if (err instanceof FirebaseError) {
         switch (err.code) {

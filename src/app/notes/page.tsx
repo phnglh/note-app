@@ -9,10 +9,9 @@ export const metadata = {
 export default function NotesPage() {
   return (
     <ProtectedRoute redirectIfAuthenticated={false} redirectTo="/login">
-      <div className="max-w-7xl mx-auto py-6">
-        <h1 className="text-3xl font-bold text-gray-900 mb-6">Your Notes</h1>
+      <main className="max-w-7xl mx-auto py-6">
         <NotesContent />
-      </div>
+      </main>
     </ProtectedRoute>
   );
 }

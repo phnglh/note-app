@@ -8,7 +8,7 @@ interface AuthFormProps {
   mode: 'login' | 'register';
   onSubmit: (e: FormEvent<HTMLFormElement>) => void;
   onChange: (field: string, value: string) => void;
-  values: { email: string; password: string; confirmPassword?: string };
+  values: { name: string; email: string; password: string; confirmPassword?: string };
   loading?: boolean;
   error?: string | null;
 }
@@ -29,6 +29,22 @@ export default function AuthForm({
         onSubmit={onSubmit}
         className="flex flex-col w-full max-w-md p-8 bg-white rounded-lg shadow-lg"
       >
+        {mode === 'register' && (
+          <div className="mb-4">
+            <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+              Name
+            </label>
+            <input
+              type="name"
+              id="name"
+              value={values.name}
+              onChange={(e: ChangeEvent<HTMLInputElement>) => onChange('name', e.target.value)}
+              placeholder="Enter your name"
+              required
+              className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
+          </div>
+        )}
         {/* Email Field */}
         <div className="mb-4">
           <label htmlFor="email" className="block text-sm font-medium text-gray-700">

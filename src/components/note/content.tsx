@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { auth, db } from '@/config/firebaseConfig';
-import { signOut, User } from 'firebase/auth';
+import { User } from 'firebase/auth';
 import { ref, set, onValue, update, remove, push } from 'firebase/database';
 import { onAuthStateChanged } from 'firebase/auth';
 import { Note } from '@/types/note';
@@ -36,14 +36,6 @@ export default function NotesContent() {
       });
     } catch (error) {
       console.error('Error fetching notes:', error);
-    }
-  };
-
-  const handleLogout = async () => {
-    try {
-      await signOut(auth);
-    } catch (error) {
-      console.error('Logout error:', error);
     }
   };
 
@@ -84,12 +76,6 @@ export default function NotesContent() {
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl">Welcome, {user?.email}</h2>
-        <button onClick={handleLogout} className="p-2 bg-red-500 text-white rounded">
-          Logout
-        </button>
-      </div>
       <div className="mb-4">
         <input
           type="text"
